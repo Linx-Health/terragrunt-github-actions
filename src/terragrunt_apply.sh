@@ -1,46 +1,47 @@
 #!/bin/bash
 
 function terragruntApply {
-  # Gather the output of `terragrunt apply`.
-  echo "apply: info: applying Terragrunt configuration in ${tfWorkingDir}"
-  applyOutput=""
-  if [ ${tgActionsRunAll} -eq 1] then
-    applyOutput=$(${tfBinary} run-all apply -auto-approve -input=false ${*} 2>&1)
-  else
-    applyOutput=$(${tfBinary} apply -auto-approve -input=false ${*} 2>&1)
-  fi
+    # Gather the output of `terragrunt apply`.
+    echo "apply: info: applying Terragrunt configuration in ${tfWorkingDir}"
+    applyOutput=""
+    if [ ${tgActionsRunAll} -eq 1 ]
+    then
+        applyOutput=$(${tfBinary} run-all apply -auto-approve -input=false ${*} 2>&1)
+    else
+        applyOutput=$(${tfBinary} apply -auto-approve -input=false ${*} 2>&1)
+    fi
 
-  
-  applyExitCode=${?}
-  applyCommentStatus="Failed"
 
-  # Exit code of 0 indicates success. Print the output and exit.
-  if [ ${applyExitCode} -eq 0 ]; then
-    echo "apply: info: successfully applied Terragrunt configuration in ${tfWorkingDir}"
-    echo "${applyOutput}"
-    echo
-    applyCommentStatus="Success"
-  fi
+    applyExitCode=${?}
+    applyCommentStatus="Failed"
 
-  # Exit code of !0 indicates failure.
-  if [ ${applyExitCode} -ne 0 ]; then
-    echo "apply: error: failed to apply Terragrunt configuration in ${tfWorkingDir}"
-    echo "${applyOutput}"
-    echo
-  fi
+    # Exit code of 0 indicates success. Print the output and exit.
+    if [ ${applyExitCode} -eq 0 ]; then
+        echo "apply: info: successfully applied Terragrunt configuration in ${tfWorkingDir}"
+        echo "${applyOutput}"
+        echo
+        applyCommentStatus="Success"
+    fi
 
-  # Comment on the pull request if necessary.
-  if [ "$GITHUB_EVENT_NAME" == "pull_request" ] && [ "${tfComment}" == "1" ]; then
-    applyCommentWrapper="#### \`${tfBinary} apply\` ${applyCommentStatus}
-<details><summary>Show Output</summary>
+    # Exit code of !0 indicates failure.
+    if [ ${applyExitCode} -ne 0 ]; then
+        echo "apply: error: failed to apply Terragrunt configuration in ${tfWorkingDir}"
+        echo "${applyOutput}"
+        echo
+    fi
 
-\`\`\`
-${applyOutput}
-\`\`\`
+    # Comment on the pull request if necessary.
+    if [ "$GITHUB_EVENT_NAME" == "pull_request" ] && [ "${tfComment}" == "1" ]; then
+        applyCommentWrapper="#### \`${tfBinary} apply\` ${applyCommentStatus}
+        <details><summary>Show Output</summary>
 
-</details>
+        \`\`\`
+        ${applyOutput}
+        \`\`\`
 
-*Workflow: \`${GITHUB_WORKFLOW}\`, Action: \`${GITHUB_ACTION}\`, Working Directory: \`${tfWorkingDir}\`, Workspace: \`${tfWorkspace}\`*"
+        </details>
+
+        *Workflow: \`${GITHUB_WORKFLOW}\`, Action: \`${GITHUB_ACTION}\`, Working Directory: \`${tfWorkingDir}\`, Workspace: \`${tfWorkspace}\`*"
 
     applyCommentWrapper=$(stripColors "${applyCommentWrapper}")
     echo "apply: info: creating JSON"
