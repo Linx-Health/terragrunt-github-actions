@@ -1,6 +1,6 @@
 FROM alpine:3
 
-RUN apk add unzip git jq openssh -y
+RUN apk add unzip git jq openssh
 
 RUN mkdir -p /src
 
