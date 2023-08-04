@@ -53,15 +53,16 @@ function terragruntPlan {
     # Comment on the pull request if necessary.
     if [ "$GITHUB_EVENT_NAME" == "pull_request" ] && [ "${tfComment}" == "1" ] && ([ "${planHasChanges}" == "true" ] || [ "${planCommentStatus}" == "Failed" ]); then
         planCommentWrapper="#### \`${tfBinary} plan\` ${planCommentStatus}
-        <details><summary>Show Output</summary>
+<details>
+<summary>Show Output</summary>
 
-        \`\`\`
-        ${planOutput}
-        \`\`\`
+\`\`\`
+${planOutput}
+\`\`\`
 
-        </details>
+</details>
 
-        *Workflow: \`${GITHUB_WORKFLOW}\`, Action: \`${GITHUB_ACTION}\`, Working Directory: \`${tfWorkingDir}\`, Workspace: \`${tfWorkspace}\`*"
+*Workflow: \`${GITHUB_WORKFLOW}\`, Action: \`${GITHUB_ACTION}\`, Working Directory: \`${tfWorkingDir}\`, Workspace: \`${tfWorkspace}\`*"
 
     planCommentWrapper=$(stripColors "${planCommentWrapper}")
     echo "plan: info: creating JSON"
