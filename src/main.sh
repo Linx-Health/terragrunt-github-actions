@@ -17,9 +17,15 @@ function hasPrefix {
 
 function installAwsCreds {
     echo "Installing AWS Credentials to the default profile."
+
     aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID" --profile default
     aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY" --profile default
     aws configure set aws_session_token "$AWS_SESSION_TOKEN" --profile default
+
+    aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID" --profile linxrx-dev
+    aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY" --profile linxrx-dev
+    aws configure set aws_session_token "$AWS_SESSION_TOKEN" --profile linxrx-dev
+
     aws sts get-caller-identity --output json --profile default
 }
 
