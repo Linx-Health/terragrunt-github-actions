@@ -21,11 +21,9 @@ function installAwsCreds {
     aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID" --profile "$AWS_PROFILE"
     aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY" --profile "$AWS_PROFILE"
     aws configure set aws_session_token "$AWS_SESSION_TOKEN" --profile "$AWS_PROFILE"
-    aws sts get-caller-identity --output json --profile default
 }
 
 function parseInputs {
-    env
     # Required inputs
     if [ "${INPUT_TF_ACTIONS_VERSION}" != "" ]; then
         tfVersion=${INPUT_TF_ACTIONS_VERSION}
