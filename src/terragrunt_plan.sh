@@ -64,7 +64,8 @@ ${planOutput}
 
 *Workflow: \`${GITHUB_WORKFLOW}\`, Action: \`${GITHUB_ACTION}\`, Working Directory: \`${tfWorkingDir}\`, Workspace: \`${tfWorkspace}\`*"
 
-    planCommentWrapper=$(stripColors "${planCommentWrapper}")
+    stripedComment=$(sed -n '/Terraform used the selected providers to generate the following execution/,$p' <<<${planCommentWrapper})
+    planCommentWrapper=$(stripColors "${stripedComment}")
     echo "plan: info: creating JSON"
     planPayload=$(echo "${planCommentWrapper}" | jq -R --slurp '{body: .}')
     planCommentsURL=$(cat ${GITHUB_EVENT_PATH} | jq -r .pull_request.comments_url)
