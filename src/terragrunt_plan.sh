@@ -52,9 +52,9 @@ function terragruntPlan {
 
     # Comment on the pull request if necessary.
     if [ "$GITHUB_EVENT_NAME" == "pull_request" ] && [ "${tfComment}" == "1" ] && ([ "${planHasChanges}" == "true" ] || [ "${planCommentStatus}" == "Failed" ]); then
-        planCommentWrapper="#### \${tfBinary} plan\ ${planCommentStatus}
-        <details>
-        <summary>Show Output</summary>
+        planCommentWrapper="#### \`${tfBinary} plan\` ${planCommentStatus}
+        <details><summary>Show Output</summary>
+
         \`\`\`
         ${planOutput}
         \`\`\`
