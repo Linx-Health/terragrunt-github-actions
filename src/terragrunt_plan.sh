@@ -52,20 +52,20 @@ function terragruntPlan {
 
     # Comment on the pull request if necessary.
     if [ "$GITHUB_EVENT_NAME" == "pull_request" ] && [ "${tfComment}" == "1" ] && ([ "${planHasChanges}" == "true" ] || [ "${planCommentStatus}" == "Failed" ]); then
+        stripedPlan=$(sed -n '/Terraform used the selected providers to generate the following execution/,$p' <<<${planOutput})
         planCommentWrapper="#### \`${tfBinary} plan\` ${planCommentStatus}
 <details>
 <summary>Show Output</summary>
 
 \`\`\`
-${planOutput}
+${stripedPlan}
 \`\`\`
 
 </details>
 
 *Workflow: \`${GITHUB_WORKFLOW}\`, Action: \`${GITHUB_ACTION}\`, Working Directory: \`${tfWorkingDir}\`, Workspace: \`${tfWorkspace}\`*"
 
-    stripedComment=$(sed -n '/Terraform used the selected providers to generate the following execution/,$p' <<<${planCommentWrapper})
-    planCommentWrapper=$(stripColors "${stripedComment}")
+    planCommentWrapper=$(stripColors "${planCommentWrapper}")
     echo "plan: info: creating JSON"
     planPayload=$(echo "${planCommentWrapper}" | jq -R --slurp '{body: .}')
     planCommentsURL=$(cat ${GITHUB_EVENT_PATH} | jq -r .pull_request.comments_url)
