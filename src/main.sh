@@ -15,8 +15,15 @@ function hasPrefix {
     esac
 }
 
+function installAwsCreds {
+    aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID" --profile default
+    aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY" --profile default
+    aws configure set aws_session_token "$AWS_SESSION_TOKEN" --profile default
+}
+
 function parseInputs {
     env
+    installAwsCreds
     # Required inputs
     if [ "${INPUT_TF_ACTIONS_VERSION}" != "" ]; then
         tfVersion=${INPUT_TF_ACTIONS_VERSION}
