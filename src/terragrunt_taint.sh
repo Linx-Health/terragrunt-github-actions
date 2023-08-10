@@ -1,47 +1,48 @@
 #!/bin/bash
 
 function terragruntTaint {
-  # Gather the output of `terragrunt taint`.
-  echo "taint: info: tainting terragrunt configuration in ${tfWorkingDir}"
-  
-  taintOutput=""
-  if [ ${tgActionsRunAll} -eq 1] then
-    taintOutput=$(for resource in ${*}; do ${tfBinary} run-all taint -allow-missing $resource; done 2>&1)
-  else
-    taintOutput=$(for resource in ${*}; do ${tfBinary} taint -allow-missing $resource; done 2>&1)
-  fi
+    # Gather the output of `terragrunt taint`.
+    echo "taint: info: tainting terragrunt configuration in ${tfWorkingDir}"
 
-  taintExitCode=${?}
-  taintCommentStatus="Failed"
+    taintOutput=""
+    if [ ${tgActionsRunAll} -eq 1 ]
+    then
+        taintOutput=$(for resource in ${*}; do ${tfBinary} run-all taint -allow-missing $resource; done 2>&1)
+    else
+        taintOutput=$(for resource in ${*}; do ${tfBinary} taint -allow-missing $resource; done 2>&1)
+    fi
 
-  # Exit code of 0 indicates success with no changes. Print the output and exit.
-  if [ ${taintExitCode} -eq 0 ]; then
-    taintCommentStatus="Success"
-    echo "taint: info: successfully tainted Terragrunt configuration in ${tfWorkingDir}"
-    echo "${taintOutput}"
-    echo
-    exit ${taintExitCode}
-  fi
+    taintExitCode=${?}
+    taintCommentStatus="Failed"
 
-  # Exit code of !0 indicates failure.
-  if [ ${taintExitCode} -ne 0 ]; then
-    echo "taint: error: failed to taint Terragrunt configuration in ${tfWorkingDir}"
-    echo "${taintOutput}"
-    echo
-  fi
+    # Exit code of 0 indicates success with no changes. Print the output and exit.
+    if [ ${taintExitCode} -eq 0 ]; then
+        taintCommentStatus="Success"
+        echo "taint: info: successfully tainted Terragrunt configuration in ${tfWorkingDir}"
+        echo "${taintOutput}"
+        echo
+        exit ${taintExitCode}
+    fi
 
-  # Comment on the pull request if necessary.
-  if [ "$GITHUB_EVENT_NAME" == "pull_request" ] && [ "${tfComment}" == "1" ]; then
-    taintCommentWrapper="#### \`${tfBinary} taint\` ${taintCommentStatus}
-<details><summary>Show Output</summary>
+    # Exit code of !0 indicates failure.
+    if [ ${taintExitCode} -ne 0 ]; then
+        echo "taint: error: failed to taint Terragrunt configuration in ${tfWorkingDir}"
+        echo "${taintOutput}"
+        echo
+    fi
 
-\`\`\`
-${taintOutput}
-\`\`\`
+    # Comment on the pull request if necessary.
+    if [ "$GITHUB_EVENT_NAME" == "pull_request" ] && [ "${tfComment}" == "1" ]; then
+        taintCommentWrapper="#### \`${tfBinary} taint\` ${taintCommentStatus}
+        <details><summary>Show Output</summary>
 
-</details>
+        \`\`\`
+        ${taintOutput}
+        \`\`\`
 
-*Workflow: \`${GITHUB_WORKFLOW}\`, Action: \`${GITHUB_ACTION}\`, Working Directory: \`${tfWorkingDir}\`, Workspace: \`${tfWorkspace}\`*"
+        </details>
+
+        *Workflow: \`${GITHUB_WORKFLOW}\`, Action: \`${GITHUB_ACTION}\`, Working Directory: \`${tfWorkingDir}\`, Workspace: \`${tfWorkspace}\`*"
 
     taintCommentWrapper=$(stripColors "${taintCommentWrapper}")
     echo "taint: info: creating JSON"
