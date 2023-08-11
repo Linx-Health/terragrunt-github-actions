@@ -57,7 +57,7 @@ function terragruntPlan {
 <details>
 <summary>Show Output</summary>
 
-\`\`\`
+\`\`\`hcl
 ${stripedPlan}
 \`\`\`
 
