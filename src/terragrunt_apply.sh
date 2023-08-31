@@ -35,7 +35,7 @@ function terragruntApply {
         applyCommentWrapper="#### \`${tfBinary} apply\` ${applyCommentStatus}
         <details><summary>Show Output</summary>
 
-        \`\`\`
+        \`\`\`hcl
         ${applyOutput}
         \`\`\`
 
