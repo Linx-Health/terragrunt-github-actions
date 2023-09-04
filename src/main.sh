@@ -15,6 +15,10 @@ function hasPrefix {
     esac
 }
 
+function setupGit {
+    git config --global url."https://oauth2:$GITHUB_PASSWORD@github.com".insteadOf https://github.com
+}
+
 function installAwsCreds {
     echo "Installing AWS Credentials to the default profile."
 
@@ -177,6 +181,7 @@ function main {
     configureCLICredentials
     installAwsCreds
     installTerraform
+    setupGit
     cd ${GITHUB_WORKSPACE}/${tfWorkingDir}
 
     case "${tfSubcommand}" in
