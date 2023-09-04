@@ -30,7 +30,7 @@ function terragruntInit {
     if [ "$GITHUB_EVENT_NAME" == "pull_request" ] && [ "${tfComment}" == "1" ]; then
         initCommentWrapper="#### \`${tfBinary} init\` Failed
 
-        \`\`\`
+        \`\`\`hcl
         ${initOutput}
         \`\`\`
 
