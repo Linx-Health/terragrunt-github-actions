@@ -16,7 +16,7 @@ function hasPrefix {
 }
 
 function setupGit {
-    git config --global url."https://oauth2:$GITHUB_PASSWORD@github.com".insteadOf https://github.com
+    git config --global url."https://oauth2:$GITHUB_TOKEN@github.com".insteadOf https://github.com
 }
 
 function installAwsCreds {
